@@ -11,7 +11,7 @@ const processDirectory = async (drive, id) => {
   var p = Promise.resolve();
   directories.data.files.map((file) => {
     const next = () => new Promise((resolve, reject) => {
-      processFile(drive, file).then((results) => {
+      processFile(drive, file, p).then((results) => {
         resolve();
       })
     });
@@ -20,19 +20,19 @@ const processDirectory = async (drive, id) => {
 }
 
 
-const processFile = (drive, file) => new Promise((resolve, reject) => {
-  sleep(3000).then(() => {
-    console.log(`----- ${file.name} ${file.mimeType} ${file.id}`);
-
+const processFile = (drive, file) => sleep(3000).then(() => {
     if (file.mimeType === 'application/vnd.google-apps.folder') {
       return processDirectory(drive, file.id).then(() => {
-        resolve();
+        // resolve();
       })
     } else {
-      resolve();
+      console.log(`----- ${file.name} ${file.mimeType} ${file.id}`);
+      // resolve();
     }
     
-  });
+    console.log("----- done");
+  // });
 });
+
 
 module.exports.processDirectory = processDirectory;
