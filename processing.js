@@ -2,37 +2,32 @@ const { sleep } = require("./helpers")
 const { filesGet, filesList, filesExport } = require('./google-drive');
 const { pretty } = require('js-object-pretty-print');
 
-const processDirectory = async (drive, id) => {  
+const processDirectory = async (drive, id, path) => {  
   const currentFile = await filesGet(drive, id);
-  console.log(`### processing directory ${currentFile.data.name} [GOOGLE ID ${id}]`);
+  path = `${path}/${currentFile.data.name}`;
+  console.log(path);
 
-  const directories = await filesList(drive, id);
+  const response = await filesList(drive, id);
   
-  var p = Promise.resolve();
-  directories.data.files.map((file) => {
-    const next = () => new Promise((resolve, reject) => {
-      processFile(drive, file, p).then((results) => {
-        resolve();
-      })
-    });
-    p = p.then(next);
-  });
+  for (file of response.data.files) {
+    await sleep(300);
+    await processFile(drive, file, path);
+  }
 }
 
 
-const processFile = (drive, file) => sleep(3000).then(() => {
+const processFile = async (drive, file, path) => {
+  
     if (file.mimeType === 'application/vnd.google-apps.folder') {
-      return processDirectory(drive, file.id).then(() => {
-        // resolve();
-      })
-    } else {
-      console.log(`----- ${file.name} ${file.mimeType} ${file.id}`);
-      // resolve();
+      await processDirectory(drive, file.id, path);
+    } else if (file.mimeType === 'application/vnd.google-apps.document') {
+      console.log(`**** processing file ${file.name}`);
+      // const contents = await filesExport(drive, file.id);
+      // console.log(contents);
+    }  else {
+      console.log(`!!!!!!!!!!!!!! ${path}/${file.name} ${file.mimeType} ${file.id}`);
     }
-    
-    console.log("----- done");
-  // });
-});
+};
 
 
 module.exports.processDirectory = processDirectory;

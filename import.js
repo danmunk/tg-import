@@ -9,7 +9,7 @@ const Settings = require("./settings");
   var auth = await authenticate();  
   const drive = google.drive({ version: 'v3', auth });
 
-  await processDirectory(drive, Settings.CONCIERGE_SERVICES_ID);
+  await processDirectory(drive, Settings.CONCIERGE_SERVICES_ID, '');
   // const conciergeDirectories = await filesList(drive, Settings.CONCIERGE_SERVICES_ID);
   
   // var p = Promise.resolve();
