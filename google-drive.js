@@ -22,7 +22,7 @@ module.exports.filesExport = (drive, fileId) => drive.files.export({
 
 module.exports.filesGet = (drive, fileId) => drive.files.get({
   fileId: fileId,
-//   alt: 'media',
+   // alt: 'media',
   supportsTeamDrives: true,
 });
 
